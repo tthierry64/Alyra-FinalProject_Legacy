@@ -6,13 +6,16 @@ import "./ERC4626Fees.sol";
 import "./DAO.sol";
 
 contract Vault is ERC4626Fees  {
-    address payable public vaultOwner; // Set the address where the fess will be transfer to
+    address payable public DAOTresory;
     uint8 internal maxLockDuration;
     uint256 internal amountLock;
     uint256 internal exitFeeBasisPoints;
+    uint256 public balanceLocked;
+    DAO public dao;
     
-    constructor (IERC20 _asset) ERC4626(_asset) ERC20("Vault Legacy Token", "vlegETH") {
-        vaultOwner = payable(msg.sender);
+    constructor (IERC20 _asset, address payable _DAOTresory, address _DAO) ERC4626(_asset) ERC20("Vault Legacy Token", "vlegETH") {
+        DAOTresory = _DAOTresory;
+        dao = DAO(_DAO);
     }
 
     function setMaxDurationUser(uint8 _duration, uint256 _amount) external {
@@ -38,7 +41,22 @@ contract Vault is ERC4626Fees  {
         return exitFeeBasisPoints;
     }
 
+    ///@dev define the address where fees are send to
     function _exitFeeRecipient() internal view override returns (address) {
-        return vaultOwner;
+        return DAOTresory;
     }
+
+        function withdraw(
+        address receiver,
+        address owner,
+        uint256 assets) external {
+        uint256 lockedBalance = dao.getBalanceWETHLocked(msg.sender);
+        if(lockedBalance != 0) {
+
+            assets -= lockedBalance;
+
+        }
+        _withdraw(receiver, owner, assets, , ,);
+    }
+
 }

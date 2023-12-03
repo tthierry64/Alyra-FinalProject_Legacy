@@ -2,10 +2,11 @@
 
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./WETH.sol";
-import "./Vault.sol";
+// import "./Vault.sol";
 
-contract DAO {
+contract DAO is ERC20 {
 
     uint8 maxDuration;
 
@@ -29,11 +30,15 @@ contract DAO {
     mapping(address => User) public user;
 
     WETH public weth;
-    Vault public vault;
+    // Vault public vault;
 
-    constructor(address _weth, address _vault) {
+    ///@dev constructor 'asked' by the OpenZeppelin contract
+    // constructor(address _weth, address _vault) ERC20("Legacy Token", "LEG"){
+    //     weth = WETH(_weth);
+    //     vault = Vault(_vault);
+    // }
+        constructor(address _weth) ERC20("Legacy Token", "LEG"){
         weth = WETH(_weth);
-        vault = Vault(_vault);
     }
 
     ///@dev Proof of life
@@ -47,7 +52,7 @@ contract DAO {
     ///@notice Allows to get the amount of ethers the user has on the smart contract 
     ///@return The amount of ethers the user has on the smart contract
     function getBalanceWETH(address _user) external view returns(uint) {
-        return user[_user].balanceWETH;
+        return weth.balanceOf(_user);
     }
 
     ///@notice Allows to get the amount of ERC4626Token the user has on the smart contract 
@@ -86,7 +91,30 @@ contract DAO {
         user[_user].maxLockedDuration = maxDuration;
     }    
 
-    function depositVault() external payable {
+   
+        
+     
+    function simulateUser(address _user) external {
+        // Créer une nouvelle instance de la structure Locked
+        Locked memory locked1 = Locked(10, 6, 5);
+
+        // Ajouter les instances de Locked au tableau _locked de l'utilisateur
+        user[_user]._locked.push(locked1);
+    }
+    // ///@dev function called when a user, connected to the Dapp make a first deposit
+    // function registerUser() external {
+    //     user[msg.sender].
+    // }
+}
+
+
+
+
+
+
+
+/*
+ function depositVault() external payable {
         // Transfer ETH of sender to WETH contract to get WETH
         weth.deposit{value: msg.value}();
         // update ERC20 WETH balance of sender
@@ -114,20 +142,4 @@ contract DAO {
         // Send ETH to user
         payable(msg.sender).transfer(_amount);
     }
-
-        
-     
-    function simulateUser(address _user) external {
-        // Créer une nouvelle instance de la structure Locked
-        Locked memory locked1 = Locked(10, 6, 5);
-        Locked memory locked2 = Locked(100, 9, 4);
-
-        // Ajouter les instances de Locked au tableau _locked de l'utilisateur
-        user[_user]._locked.push(locked1);
-        user[_user]._locked.push(locked2);
-    }
-    // ///@dev function called when a user, connected to the Dapp make a first deposit
-    // function registerUser() external {
-    //     user[msg.sender].
-    // }
-}
+*/

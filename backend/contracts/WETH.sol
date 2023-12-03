@@ -11,9 +11,7 @@ contract WETH is ERC20 {
 
 
     ///@dev constructor 'asked' by the OpenZeppelin contract
-    constructor() ERC20("Wrapped Ether", "WETH") {
-
-    }
+    constructor() ERC20("Wrapped Ether", "WETH") { }
 
     /// @dev mint 1 WETH for each ETH sent by the sender. WETH are automatically associated to the sender 
     function deposit() external payable {
@@ -25,9 +23,5 @@ contract WETH is ERC20 {
         require(balanceOf(msg.sender) >= _amount, "insufficient balance");
         _burn(msg.sender, _amount);
         payable(msg.sender).transfer(_amount);
-    }
-
-    function transfer() external {
-
     }
 }
