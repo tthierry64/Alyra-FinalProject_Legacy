@@ -10,8 +10,10 @@ contract Vault is ERC4626Fees  {
     uint8 internal maxLockDuration;
     uint256 internal amountLock;
     uint256 internal exitFeeBasisPoints;
-    uint256 public balanceLocked;
+    uint256 internal balanceLocked;
     DAO public dao;
+
+
     
     constructor (IERC20 _asset, address payable _DAOTresory, address _DAO) ERC4626(_asset) ERC20("Vault Legacy Token", "vlegETH") {
         DAOTresory = _DAOTresory;
@@ -46,17 +48,22 @@ contract Vault is ERC4626Fees  {
         return DAOTresory;
     }
 
-        function withdraw(
-        address receiver,
-        address owner,
-        uint256 assets) external {
-        uint256 lockedBalance = dao.getBalanceWETHLocked(msg.sender);
-        if(lockedBalance != 0) {
 
-            assets -= lockedBalance;
-
+    function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares) internal override {
+        uint256 withdrawAmount;       
+        if(dao.getBalanceWETHLocked(owner) > 0) {
+            withdrawAmount = assets - dao.getBalanceWETHLocked(owner);
+        } else {
+            withdrawAmount = assets;
         }
-        _withdraw(receiver, owner, assets, , ,);
+        
+        uint256 fee = _feeOnRaw(withdrawAmount, _exitFeeBasisPoints());
+        address recipient = _exitFeeRecipient();
+        
+        super._withdraw(caller, receiver, owner, withdrawAmount, shares);
+        
+        if (fee > 0 && recipient != address(this)) {
+            SafeERC20.safeTransfer(IERC20(asset()), recipient, fee);
+        }
     }
-
 }
