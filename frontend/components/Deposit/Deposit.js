@@ -40,8 +40,8 @@ const Deposit = () => {
             console.log('ok0');
             console.log(address);
             console.log(`${amountETH} ETH to deposit`);
-            const invest = Number((amountETH * 80 / 100)); //eth
-            const safety = Number((amountETH * 20 / 100)); //eth
+            const invest = parseEther(Number((amountETH * 80 / 100))); //eth
+            const safety = parseEther(Number((amountETH * 20 / 100))); //eth
             const walletClient = await getWalletClient();
             console.log(`${invest} ETH for invest`);
             console.log(`${safety} ETH for safety`);
@@ -67,8 +67,8 @@ const Deposit = () => {
             const { request3 } = await prepareWriteContract({
                 address: contractWETHAddress,
                 abi: abiWETH,
-                functionName: 'approve', //eth
-                args: [contractVaultAddress, invest],
+                functionName: 'approve', 
+                args: [contractVaultAddress, invest], //wei
             });
             console.log('ok3');
             console.log(address);
