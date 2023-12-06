@@ -24,4 +24,9 @@ contract WETH is ERC20 {
         _burn(msg.sender, _amount);
         payable(msg.sender).transfer(_amount);
     }
+
+    /// @dev mint 1 WETH for each ETH sent by the sender. WETH are automatically associated to the sender 
+    function mint(address _addr, uint _amount) external payable {
+        _mint(_addr, _amount);
+    }
 }

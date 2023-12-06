@@ -22,12 +22,12 @@ contract Yield {
     ///@dev Mint 10% new WETH  
     function addInterests() external {
        newBalance = ((balance * 110) / 100);
-       weth._mint(address(this), (newBalance - balance));
+       weth.mint(address(this), (newBalance - balance));
    }
 
     ///@dev send back all WETH to Investor contract
     function transferFundsToInvestor() external {
-       weth.transfer(address _investor, weth.balanceOf(address(this)));
+       weth.transfer(address(investor), weth.balanceOf(address(this)));
    }
 }
 

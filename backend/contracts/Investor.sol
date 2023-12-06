@@ -41,7 +41,5 @@ contract Investor is Ownable {
        newBalance = weth.balanceOf(address(this));      
        weth.transfer(address(vault), (balanceSend + ((newBalance-balanceSend) / 2)));
        weth.transfer(DAOTresoryContractAddress, ((newBalance-balanceSend)/2));
-        
-
     } 
 }
