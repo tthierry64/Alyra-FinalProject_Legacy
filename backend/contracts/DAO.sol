@@ -33,6 +33,10 @@ contract DAO is ERC20 {
         _mint(msg.sender, user[msg.sender].LEGToMint);
         user[msg.sender].alreadyMint += _amount;
         user[msg.sender].LEGToMint -= _amount;        
+    }
+
+    function burnLeg(uint _amount) external {
+        _burn(msg.sender, _amount);
     }    
 
     ///@notice Allows to get the amount of ERC4626Token the user has on the smart contract
