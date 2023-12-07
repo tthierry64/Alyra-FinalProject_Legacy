@@ -1,48 +1,90 @@
-const { expect } = require("chai");
+const { assert, expect } = require("chai");
+const { ethers } = require('hardhat');
+const {loadFixture} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
+const helpers = require("@nomicfoundation/hardhat-network-helpers");
 
-describe("WETH", function() {
- let WETH;
- let hardhatWETH;
- let owner;
- let addr1;
- let addr2;
- let addrs;
+describe("WETH tests", function () {
+    async function deployContract() {
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const WETH = await ethers.getContractFactory("WETH");
+    const weth = await WETH.deploy(WETH);
+    return {weth, owner, addr1, addr2, addr3};
+    };
 
- beforeEach(async function () {
-   WETH = await ethers.getContractFactory("WETH");
-   [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+    describe("Deployment", function () {
+        it("Should deploy the smart contract", async function () {
+            const [addr1] = await ethers.getSigners();
+            const { weth } = await loadFixture(deployContract);
+            expect(await weth.balanceOf(addr1)).to.equal(0);
+        });
+     
+    });
+    
+    describe("Creation of token", function () {   
+      it("should be named Wrapped Ether", async function () {
+          const { weth } = await loadFixture(deployContract);          
+          expect(await weth.name()).to.equal("Wrapped Ether")
+      });
 
-   hardhatWETH = await WETH.deploy();
-   await hardhatWETH.deployed();
- });
+      it("should have WETH symbol", async function () {
+          const { weth } = await loadFixture(deployContract); 
+          expect(await weth.symbol()).to.equal("WETH")
+      });
 
- describe("Deployment", function () {
-   it("Should set the right owner", async function () {
-     expect(await hardhatWETH.owner()).to.equal(owner.address);
-   });
+      it("should have a total supply of 0 at the deployment", async function () {
+          const { weth, addr1 } = await loadFixture(deployContract); 
+          expect(await weth.totalSupply(addr1)).to.equal(ethers.parseEther("0"))
+      });
+    });
 
-   it("Should assign the total supply of tokens to the owner", async function () {
-     const ownerBalance = await hardhatWETH.balanceOf(owner.address);
-     expect(await hardhatWETH.totalSupply()).to.equal(ownerBalance);
-   });
- });
+    describe("Balance", function () {
+        it("Should update user balance after deposit", async function () {
+            const { weth,addr1 } = await loadFixture(deployContract);
+            const depositAmount = ethers.parseEther('4');
+            await weth.connect(addr1).deposit({ value: depositAmount });
+            const finalBalance = await weth.connect(addr1).balanceOf(addr1.address);
+            expect(finalBalance).to.be.equal(depositAmount);
+        });
+    });
 
- describe("Deposit", function () {
-   it("Should increase the balance of the sender", async function () {
-     await hardhatWETH.connect(addr1).deposit({value: ethers.utils.parseEther("1.0")});
-     expect(await hardhatWETH.balanceOf(addr1.address)).to.equal(ethers.utils.parseEther("1.0"));
-   });
- });
+    describe("Deposit", function () {
+        it("Should update user balance after deposit", async function () {
+            const { weth, addr1 } = await loadFixture(deployContract);
+            const depositAmount = ethers.parseEther('4');
+            await weth.connect(addr1).deposit({ value: depositAmount });
+            const finalBalance = await weth.connect(addr1).balanceOf(addr1.address);
+            expect(finalBalance).to.be.equal(depositAmount);
+        });
 
- describe("Withdraw", function () {
-   it("Should decrease the balance of the sender", async function () {
-     await hardhatWETH.connect(addr1).deposit({value: ethers.utils.parseEther("1.0")});
-     await hardhatWETH.connect(addr1).withdraw(ethers.utils.parseEther("1.0"));
-     expect(await hardhatWETH.balanceOf(addr1.address)).to.equal(0);
-   });
+        it("Should update user balance after deposit when ETH amount is greater than 0", async function () {
+          const { weth, addr1 } = await loadFixture(deployContract);
+          const depositAmount = ethers.parseEther('1');
+          await weth.connect(addr1).deposit({ value: depositAmount });
+          const finalBalance = await weth.connect(addr1).balanceOf(addr1.address);
+          expect(finalBalance).to.be.equal(depositAmount);
+      });     
+            
+    });
+    
+    describe("Withdraw", function () {
+      it("Should fail if user tries to withdraw more than their balance", async function () {
+          const { weth,addr1 } = await loadFixture(deployContract);
+          const depositAmount = ethers.parseEther('1');
+          await weth.connect(addr1).deposit({ value: depositAmount });
+          const withdrawAmount = ethers.parseEther('2');
+          await expect(weth.connect(addr1).withdraw(withdrawAmount))
+           .to.be.revertedWith("insufficient balance");
+      });
+    });  
 
-   it("Should revert if the sender does not have enough balance", async function () {
-     await expect(hardhatWETH.connect(addr1).withdraw(ethers.utils.parseEther("1.0"))).to.be.revertedWith("insufficient balance");
-   });
- });
-});
+    describe("Approve", function () {
+
+      it("should emit Approval event", async function () {
+        const { weth } = await loadFixture(deployContract);
+        const [owner, spender] = await ethers.getSigners();
+        const amount = ethers.parseEther("100");
+        await expect(weth.approve(spender.address, amount)).to.emit(weth, 'Approval').withArgs(owner.address, spender.address, amount)
+      });  
+    });  
+
+});  

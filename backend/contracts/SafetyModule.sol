@@ -21,9 +21,9 @@ contract SafetyModule {
     function withdraw(uint _amount) external {
         require(accounts[msg.sender].balance >= _amount, "Not enough funds");
         accounts[msg.sender].balance -= _amount;
+        emit etherWithdrawed(msg.sender, _amount);
         (bool received, ) = msg.sender.call{value: _amount}("");
         require(received, "An error occured");
-        emit etherWithdrawed(msg.sender, _amount);
     }
 
     ///@notice Allows a user to deposit ethers on the smart contract
@@ -38,6 +38,12 @@ contract SafetyModule {
     ///@return The amount of ethers the user has on the smart contract
     function getBalanceOfUser() external view returns(uint) {
         return accounts[msg.sender].balance;
+    }
+
+    ///@notice 
+    ///@return The timestamp of last deposit
+    function getLastDepositOfUser() external view returns(uint) {
+        return accounts[msg.sender].lastDeposit;
     }
 
 }

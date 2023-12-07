@@ -7,6 +7,8 @@ import "./WETH.sol";
 import "./Investor.sol";
 
 contract Yield {
+    uint256 balance;
+    uint256 newBalance;
     WETH public weth;
     Investor public investor;
 
@@ -16,8 +18,12 @@ contract Yield {
    }
 
     ///@dev This contract is a simulator of an invest that provides 10% interest of the original balance
-    uint256 balance = weth.balanceOf(address(this));
-    uint256 newBalance;
+
+
+    function getBalanceWETH() public returns(uint) {
+        balance = weth.balanceOf(address(this));
+        return balance;
+    }
 
     ///@dev Mint 10% new WETH  
     function addInterests() external {
