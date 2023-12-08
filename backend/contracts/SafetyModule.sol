@@ -15,6 +15,13 @@ contract SafetyModule {
 
     event etherDeposited(address indexed account, uint amount);
     event etherWithdrawed(address indexed account, uint amount);
+    event Received(address, uint);
+
+
+
+    receive() external payable {
+        emit Received(msg.sender, msg.value);
+    }
 
     ///@notice Allows the user to withdraw ethers from the smart contract 
     ///@param _amount The amount of ethers the user wants to withdraw

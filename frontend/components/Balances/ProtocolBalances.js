@@ -7,7 +7,7 @@ import { prepareWriteContract, writeContract, readContract } from '@wagmi/core'
 import { useAccount, usePublicClient } from 'wagmi'
 
 // Contracts informations
-import { abiDAO, abiVault, abiWETH, contractDAOAddress, contractVaultAddress, contractWETHAddress } from '@/constants';;
+import { abiDAO, abiVault, abiWETH, contractInvestorAddress, contractVaultAddress, contractWETHAddress } from '@/constants';;
 
 // ReactJS
 import { useState, useEffect } from 'react'
@@ -16,14 +16,16 @@ import { useState, useEffect } from 'react'
 import { formatEther, parseEther, createPublicClient, http, parseAbiItem } from 'viem'
 import { hardhat } from 'viem/chains'
 
-const Balances = () => {
+const ProtocolBalances = () => {
 
     // Client Viem
     const client = usePublicClient();
 
     // Balance of the user State
-    const [balanceETH, setBalanceETH] = useState(0);
+    const [balanceWETH, setBalanceWETH] = useState(0);
+    const [allowanceVault, setAllowanceVault] = useState(0);
     const [balancevlegETH, setBalancevlegETH] = useState(0);
+    const [allowanceInvestor, setAllowanceInvestor] = useState(0);    
     const [balanceLockedETH, setBalanceLockedETH] = useState(0);
     const [balanceLEG, setBalanceLEG] = useState(0);
 
@@ -37,15 +39,31 @@ const Balances = () => {
     const { address, isConnected } = useAccount();
 
     // Get the different balances of the user
-    const getBalanceOfUserETH = async() => {
+    const getBalanceOfUserWETH = async() => {
         try {
             const data = await readContract({
                 address: contractWETHAddress,
                 abi: abiWETH,
-                functionName: 'balanceOf', //wei
+                functionName: 'balanceOf',
                 args: [address],
             })
-            return (data);
+            return formatEther(data);
+        }   
+        catch(err) {
+            console.log(err.message)
+        }
+    };
+
+    const getAllowanceVault = async() => {
+        try {
+            const data = await readContract({
+                address: contractWETHAddress,
+                abi: abiWETH,
+                functionName: 'allowance',
+                args: [address, contractVaultAddress],
+            })
+            return formatEther(data);
+
         }   
         catch(err) {
             console.log(err.message)
@@ -57,85 +75,66 @@ const Balances = () => {
             const data = await readContract({
                 address: contractVaultAddress,
                 abi: abiVault,
-                functionName: 'balanceOf', //eth
+                functionName: 'balanceOf',
                 args: [address],
             })
-            return (data);
+            return formatEther(data);
             // return formatEther(data);
         }   
         catch(err) {
             console.log(err.message)
         }
     };
-    
-    // const getBalanceOfUserLEG = async() => {
-    //     try {
-    //         const data = await readContract({
-    //             address: contractDAOAddress,
-    //             abi: abiDAO,
-    //             functionName: 'getBalanceLEG',
-    //             args: [address],
-    //         })
-    //         return formatEther(data);
-    //     }   
-    //     catch(err) {
-    //         console.log(err.message)
-    //     }
-    // };   
 
-    // const getBalanceOfUserLockedETH = async() => {
-    //     try {
-    //         const data = await readContract({
-    //             address: contractDAOAddress,
-    //             abi: abiDAO,
-    //             functionName: 'getBalanceWETHLocked',
-    //             args: [address],
-    //         })
-    //         return formatEther(data);
-    //     }   
-    //     catch(err) {
-    //         console.log(err.message)
-    //     }
-    // };
+    const getAllowanceInvestor = async() => {
+        try {
+            const data = await readContract({
+                address: contractWETHAddress,
+                abi: abiWETH,
+                functionName: 'allowance',
+                args: [address, contractInvestorAddress],
+            })
+            return formatEther(data);
+
+        }   
+        catch(err) {
+            console.log(err.message)
+        }
+    };    
+
     
     useEffect(() => {
         const getBalances = async() => {
             if(!isConnected) return
-            const balanceETH = await getBalanceOfUserETH()
-            setBalanceETH((balanceETH))
+            const balanceWETH = await getBalanceOfUserWETH()
+            setBalanceWETH((balanceWETH))
+            const allowanceVault = await getAllowanceVault()
+            setAllowanceVault((allowanceVault))            
             const balancevlegETH = await getBalanceOfUservlegETH()
             setBalancevlegETH((balancevlegETH))
-            // const balanceLockedETH = await getBalanceOfUserLockedETH()
-            // setBalanceLockedETH((balanceLockedETH))
-            // const balanceLEG = await getBalanceOfUserLEG()
-            // setBalanceLEG((balanceLEG))
+            const allowanceInvestor = await getAllowanceInvestor()
+            setAllowanceInvestor((allowanceInvestor))            
         }
         getBalances()
     }, [address]);
     
     return (
         <Flex p='2rem'>
-            {isLoading 
-            ? ( <Spinner /> ) 
-            : ( isConnected ? (
+
                 <Flex direction="column" width='100%'>
                     <Heading as='h2' size='xl' color="white">
-                        Your balances in the Protocol
+                        Balances in the Protocol
                     </Heading>
-                    <Text mt='1rem' color="white">{balanceETH} ETH</Text>
+                    <Text mt='1rem' color="white">{balanceWETH} WETH</Text>
+                    <Text mt='1rem' color="white">{allowanceVault} Currently allowed to Vault contract</Text>
                     <Text mt='1rem' color="white">{balancevlegETH} vlegETH</Text>
-                    {/* <Text mt='1rem' color="white">{balanceLockedETH} locked ETH</Text>
-                    <Text mt='1rem' color="white">{balanceLEG} LEG</Text> */}
+                    <Text mt='1rem' color="white">{allowanceInvestor} Currently allowed to Investor contract</Text>
+
 
                 </Flex>
-            ) : (
-                <Alert status='warning'>
-                    <AlertIcon />
-                    Please connect your Wallet to see your balances.
-                </Alert>
-            )) }
+
         </Flex>
     )
 };
 
-export default Balances;
+export default ProtocolBalances;

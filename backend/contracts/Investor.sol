@@ -42,4 +42,8 @@ contract Investor is Ownable {
        weth.transfer(address(vault), (balanceSend + ((newBalance-balanceSend) / 2)));
        weth.transfer(DAOTresoryContractAddress, ((newBalance-balanceSend)/2));
     } 
+
+    function getFromVault(uint _amount) external onlyOwner  {
+        weth.transferFrom(address(vault), address(this), _amount);
+    }
 }

@@ -36,4 +36,3 @@ contract Yield {
        weth.transfer(address(investor), weth.balanceOf(address(this)));
    }
 }
-

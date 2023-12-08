@@ -6,7 +6,7 @@ async function main() {
   await safetyModule.waitForDeployment();
   console.log(`SafetyModule Contract deployed to ${safetyModule.target}`);
 
-  const weth = await hre.ethers.deployContract("WETH");
+  const weth = await hre.ethers.deployContract("WETH", [safetyModule.target]);
   await weth.waitForDeployment();
   console.log(`WETH Contract deployed to ${weth.target}`);
 
