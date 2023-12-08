@@ -22,12 +22,8 @@ const ProtocolBalances = () => {
     const client = usePublicClient();
 
     // Balance of the user State
-    const [balanceWETH, setBalanceWETH] = useState(0);
-    const [allowanceVault, setAllowanceVault] = useState(0);
-    const [balancevlegETH, setBalancevlegETH] = useState(0);
-    const [allowanceInvestor, setAllowanceInvestor] = useState(0);    
-    const [balanceLockedETH, setBalanceLockedETH] = useState(0);
-    const [balanceLEG, setBalanceLEG] = useState(0);
+    const [balanceWETHV, setBalanceWETHV] = useState(0);
+    const [balanceWETHI, setBalanceWETHI] = useState(0);
 
     // IsLoading 
     const [isLoading, setIsLoading] = useState(false);
@@ -39,13 +35,13 @@ const ProtocolBalances = () => {
     const { address, isConnected } = useAccount();
 
     // Get the different balances of the user
-    const getBalanceOfUserWETH = async() => {
+    const getBalanceOfVaultWETH = async() => {
         try {
             const data = await readContract({
                 address: contractWETHAddress,
                 abi: abiWETH,
                 functionName: 'balanceOf',
-                args: [address],
+                args: [contractVaultAddress],
             })
             return formatEther(data);
         }   
@@ -53,67 +49,27 @@ const ProtocolBalances = () => {
             console.log(err.message)
         }
     };
-
-    const getAllowanceVault = async() => {
+    const getBalanceOfInvestortWETH = async() => {
         try {
             const data = await readContract({
                 address: contractWETHAddress,
                 abi: abiWETH,
-                functionName: 'allowance',
-                args: [address, contractVaultAddress],
-            })
-            return formatEther(data);
-
-        }   
-        catch(err) {
-            console.log(err.message)
-        }
-    };
-
-    const getBalanceOfUservlegETH = async() => {
-        try {
-            const data = await readContract({
-                address: contractVaultAddress,
-                abi: abiVault,
                 functionName: 'balanceOf',
-                args: [address],
+                args: [contractInvestorAddress],
             })
             return formatEther(data);
-            // return formatEther(data);
         }   
         catch(err) {
             console.log(err.message)
         }
     };
-
-    const getAllowanceInvestor = async() => {
-        try {
-            const data = await readContract({
-                address: contractWETHAddress,
-                abi: abiWETH,
-                functionName: 'allowance',
-                args: [address, contractInvestorAddress],
-            })
-            return formatEther(data);
-
-        }   
-        catch(err) {
-            console.log(err.message)
-        }
-    };    
-
-    
     useEffect(() => {
         const getBalances = async() => {
             if(!isConnected) return
-            const balanceWETH = await getBalanceOfUserWETH()
-            setBalanceWETH((balanceWETH))
-            const allowanceVault = await getAllowanceVault()
-            setAllowanceVault((allowanceVault))            
-            const balancevlegETH = await getBalanceOfUservlegETH()
-            setBalancevlegETH((balancevlegETH))
-            const allowanceInvestor = await getAllowanceInvestor()
-            setAllowanceInvestor((allowanceInvestor))            
+            const balanceWETHV = await getBalanceOfVaultWETH()
+            setBalanceWETHV((balanceWETHV))
+            const balanceWETHI = await getBalanceOfInvestortWETH()
+            setBalanceWETHI((balanceWETHI))           
         }
         getBalances()
     }, [address]);
@@ -125,12 +81,8 @@ const ProtocolBalances = () => {
                     <Heading as='h2' size='xl' color="white">
                         Balances in the Protocol
                     </Heading>
-                    <Text mt='1rem' color="white">{balanceWETH} WETH</Text>
-                    <Text mt='1rem' color="white">{allowanceVault} Currently allowed to Vault contract</Text>
-                    <Text mt='1rem' color="white">{balancevlegETH} vlegETH</Text>
-                    <Text mt='1rem' color="white">{allowanceInvestor} Currently allowed to Investor contract</Text>
-
-
+                    <Text mt='1rem' color="white">{balanceWETHV} WETH in Vault contract</Text>
+                    <Text mt='1rem' color="white">{balanceWETHI} WETH in Investor contract</Text>
                 </Flex>
 
         </Flex>

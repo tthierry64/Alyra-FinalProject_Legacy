@@ -23,7 +23,7 @@ const DepositYield = () => {
     const config = usePublicClient();
 
     // Input States
-    const [amountETH, setAmountETH] = useState([]);
+    const [amountWETH, setAmountWETH] = useState([]);
 
     // State that registers if the current address is the owner
     const [isOwner, setIsOwner] = useState(false);
@@ -38,73 +38,23 @@ const DepositYield = () => {
     const { address, isConnected } = useAccount();
 
     // Function to Deposit ETH in Yield for investment
-    const depositETH = async() => {
+    const DepositInvestor = async() => {
         try {
-            console.log('ok0');
-            console.log(address);
-            console.log(`${amountETH} ETH to deposit`);
-            const invest = Number((amountETH * 80 / 100)); //eth
-            const safety = Number((amountETH * 20 / 100)); //eth
-            const walletClient = await getWalletClient();
-            console.log(`${invest} ETH for invest`);
-            console.log(`${safety} ETH for safety`);
-             
-            const { request1 } = await prepareWriteContract({
-                address: contractSafetyModuleAddress,
-                abi: abiSafetyModule,
-                functionName: 'deposit', //wei
-                value: (parseEther(invest)),
-                account: address,             
+            const _amountWETH = BigInt(parseEther(amountWETH)); 
+            const { request } = await prepareWriteContract({
+                address: contractInvestorAddress,
+                abi: abiInvestor,
+                functionName: 'getFromVault', 
+                args: [_amountWETH],
             });
-            console.log('ok1');
-            const { request2 } = await prepareWriteContract({
-                address: contractWETHAddress,
-                abi: abiWETH,
-                functionName: 'deposit', //wei
-                value: (parseEther(invest)),
-                account:address,        
-            });            
-            console.log('ok2');
-            console.log(contractVaultAddress);
-            console.log(contractVaultAddress.toString());
-            const { request3 } = await prepareWriteContract({
-                address: contractWETHAddress,
-                abi: abiWETH,
-                functionName: 'approve', //eth
-                args: [contractVaultAddress, invest],
-            });
-            console.log('ok3');
-            console.log(address);
-            console.log(address);
-            const { request4 } = await prepareWriteContract({
-                address: contractVaultAddress,
-                abi: abiVault,
-                functionName: 'deposit', //eth
-                args : [invest, address]
-            });
-            console.log('ok4');            
-            const { request5 } = await prepareWriteContract({
-                address: contractVaultAddress,
-                abi: abiVault,
-                functionName: 'approve', //eth
-                args: [contractInvestorAddress, invest], //100% ETH to allow manipulate 80% initial balance + interest
-            });
-            console.log('ok5');            
-            const { request6 } = await prepareWriteContract({
-                address: contractVaultAddress,
-                abi: abiVault,
-                functionName: 'transferFrom', //eth
-                args: [address, contractInvestorAddress, invest], //100% ETH to allow manipulate 80% initial balance + interest
-            });            
-            console.log('ok6');
-            const { hash } = await writeContract(request1, request2, request3, request4,request5, request6);
+            const { hash } = await writeContract(request);
             const data = await waitForTransaction({
-                hash: hash,
+                hash: hash
             });
             setIsLoading(false);
             toast({
                 title: 'Congratulations',
-                description: "You have made your deposit.",
+                description: "You have transfered WETH from Vault.",
                 status: 'success',
                 duration: 4000,
                 isClosable: true,
@@ -122,6 +72,8 @@ const DepositYield = () => {
             })
         }  
     };
+    
+   
 
     // Verify is user is the owner of the contract
     const getIsOwner = async() => {
@@ -159,12 +111,12 @@ const DepositYield = () => {
                 <Flex direction="column" width='100%'>
                     
                     <Heading as='h2' size='xl' color="white">
-                        Deposit WETH in the Yield Contract
+                        Deposit WETH in the Investor Contract
                     </Heading>
                     
                     <Flex mt='1rem'>
-                        <Input placeholder="Amount in WETH" color="white" value={amountETH} onChange={(e) => setAmountETH(e.target.value)}  />
-                        <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={depositETH}>Deposit</Button>
+                        <Input placeholder="Amount in WETH" color="white" value={amountWETH} onChange={(e) => setAmountWETH(e.target.value)}  />
+                        <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={DepositInvestor}>Deposit</Button>
                     </Flex>
 
                 </Flex>
