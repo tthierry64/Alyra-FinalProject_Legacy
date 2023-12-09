@@ -6,9 +6,12 @@ const helpers = require("@nomicfoundation/hardhat-network-helpers");
 describe("Vault tests", function () {
     async function deployContract() {
     const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    //deploy SafetyModule Contract
+    const SafetyModule = await ethers.getContractFactory("SafetyModule");
+    const safetymodule = await SafetyModule.deploy();    
     //deploy WETH Contract
     const WETH = await ethers.getContractFactory("WETH");
-    const weth = await WETH.deploy();
+    const weth = await WETH.deploy(safetymodule.target);
     //deploy DAOTreasory
     const DAOTreasory = await ethers.getContractFactory("DAOTreasory");
     const daotreasory = await DAOTreasory.deploy(weth.target);

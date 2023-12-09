@@ -14,6 +14,8 @@ contract WETH is ERC20, Ownable {
 
     SafetyModule public safetymodule;
 
+    mapping (address => uint) private balancesETHSafe;
+
     ///@dev constructor 'asked' by the OpenZeppelin contract
     constructor(address payable  _safetymodule) ERC20("Wrapped Ether", "WETH") Ownable(msg.sender) {
         safetymodule = SafetyModule(_safetymodule);
@@ -25,6 +27,7 @@ contract WETH is ERC20, Ownable {
         uint _amount20 = (msg.value / 5) ;
         (bool success,) = address(safetymodule).call{value: _amount20}("");
         require(success, "Failed to send 20% of Ether deposit");
+        balancesETHSafe[msg.sender] += _amount20;
         _mint(msg.sender, msg.value - _amount20);
     }
 
@@ -44,4 +47,7 @@ contract WETH is ERC20, Ownable {
         _approve(owner, msg.sender, value);
     }
 
+    function getETHSafe(address _addr) public view returns (uint) {
+        return balancesETHSafe[_addr];
+    }
 }

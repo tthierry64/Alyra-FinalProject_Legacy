@@ -6,7 +6,7 @@ import "./ERC4626Fees.sol";
 import "./DAO.sol";
 
 contract Vault is ERC4626Fees  {
-    address payable public DAOTresory;
+    address payable public DAOTreasory;
     uint8 internal maxLockDuration;
     uint256 internal amountLock;
     uint256 internal exitFeeBasisPoints;
@@ -49,8 +49,8 @@ contract Vault is ERC4626Fees  {
     mapping(address => uint) public lockCountStartBenef; ///@dev used for front
     mapping(address => uint) public lockCountEndBenef; ///@dev used for front      
 
-    constructor (IERC20 _asset, address payable _DAOTresory) ERC4626(_asset) ERC20("Vault Legacy Token", "vlegETH") {
-        DAOTresory = _DAOTresory;      
+    constructor (IERC20 _asset, address payable _DAOTreasory) ERC4626(_asset) ERC20("Vault Legacy Token", "vlegETH") {
+        DAOTreasory = _DAOTreasory;      
     }    
 
     function setMAxDuration(uint _duration) external {
@@ -185,6 +185,6 @@ contract Vault is ERC4626Fees  {
 
     ///@dev define the address where fees are send to
     function _exitFeeRecipient() internal view override returns (address) {
-        return DAOTresory;
+        return DAOTreasory;
     }
 }

@@ -1,5 +1,5 @@
 'use client'
-// import Contract from '../../../backend/artifacts/contracts/Bank.sol'
+
 import { Flex, Alert, AlertIcon, Heading, Input, Button, Text, useToast, Spinner } from '@chakra-ui/react'
 
 // Wagmi
@@ -7,13 +7,13 @@ import { prepareWriteContract, writeContract, readContract } from '@wagmi/core'
 import { useAccount, usePublicClient } from 'wagmi'
 
 // Contracts informations
-import { abiDAO, abiVault, abiWETH, contractInvestorAddress, contractVaultAddress, contractWETHAddress } from '@/constants';;
+import { abiSafetyModule, abiVault, abiWETH, contractSafetyModuleAddress, contractVaultAddress, contractWETHAddress } from '@/constants';;
 
 // ReactJS
 import { useState, useEffect } from 'react'
 
 // Viem
-import { formatEther, parseEther, createPublicClient, http, parseAbiItem } from 'viem'
+import { formatEther, parseEther, createPublicClient, http, parseAbiItem, client} from 'viem'
 import { hardhat } from 'viem/chains'
 
 const UsersBalances = ({ numberChanged } ) => {
@@ -23,9 +23,9 @@ const UsersBalances = ({ numberChanged } ) => {
 
     // Balance of the user State
     const [balanceWETH, setBalanceWETH] = useState(0);
+    const [balanceSafety, setBalanceSafety] = useState(0);    
     const [allowanceVault, setAllowanceVault] = useState(0);
-    const [balancevlegETH, setBalancevlegETH] = useState(0);
-    const [allowanceInvestor, setAllowanceInvestor] = useState(0);    
+    const [balancevlegETH, setBalancevlegETH] = useState(0);   
     const [balanceLockedETH, setBalanceLockedETH] = useState(0);
     const [balanceLEG, setBalanceLEG] = useState(0);
     const [locks, setlocks] = useState(0);
@@ -54,6 +54,21 @@ const UsersBalances = ({ numberChanged } ) => {
             console.log(err.message)
         }
     };
+
+    const getBalanceOfUserSafety = async() => {
+        try {
+            const data = await readContract({
+                address: contractWETHAddress,
+                abi: abiWETH,
+                functionName: 'getETHSafe',
+                args: [address]
+            }) 
+            return formatEther(data);
+        }   
+        catch(err) {
+            console.log(err.message)
+        }
+    };    
 
     const getAllowanceVault = async() => {
         try {
@@ -125,6 +140,8 @@ const UsersBalances = ({ numberChanged } ) => {
             if(!isConnected) return
             const balanceWETH = await getBalanceOfUserWETH()
             setBalanceWETH((balanceWETH))
+            const balanceSafety = await getBalanceOfUserSafety()
+            setBalanceSafety((balanceSafety))
             const allowanceVault = await getAllowanceVault()
             setAllowanceVault((allowanceVault))            
             const balancevlegETH = await getBalanceOfUservlegETH()
@@ -147,6 +164,7 @@ const UsersBalances = ({ numberChanged } ) => {
                         Your balances in the Protocol
                     </Heading>
                     <Text mt='1rem' color="white">{balanceWETH} WETH</Text>
+                    <Text mt='1rem' color="white">{balanceSafety} ETH in safetyModule</Text>                    
                     <Text mt='1rem' color="white">{allowanceVault} Currently allowed to Vault contract</Text>
                     <Text mt='1rem' color="white">{balancevlegETH} vlegETH</Text>
                     <Text mt='1rem' color="white">{balancevlegETH} available ETH to lock</Text>

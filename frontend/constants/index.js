@@ -109,7 +109,7 @@ export const abiSafetyModule = [
 ]
 export const contractSafetyModuleAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
 
-export const abiWETH = [
+export const abiWETH =[
   {
     "inputs": [
       {
@@ -354,11 +354,6 @@ export const abiWETH = [
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "value",
         "type": "uint256"
@@ -406,6 +401,25 @@ export const abiWETH = [
     "name": "deposit",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_addr",
+        "type": "address"
+      }
+    ],
+    "name": "getETHSafe",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -2092,6 +2106,25 @@ export const abiVault = [
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "numberOfLocks",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "assets",
         "type": "uint256"
@@ -2486,19 +2519,6 @@ export const abiInvestor = [
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "getFromVault",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -3082,7 +3102,7 @@ export const abiYield = [
   },
   {
     "inputs": [],
-    "name": "addInterests",
+    "name": "addInterest",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -3097,7 +3117,7 @@ export const abiYield = [
         "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {

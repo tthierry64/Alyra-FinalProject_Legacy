@@ -160,7 +160,7 @@ const Deposit = ({ setNumberChanged }) => {
                     </Heading>
                     
                     <Flex mt='1rem'>
-                        <Input placeholder="Amount of WETH to mint in ETH" color="white" value={amountETH} onChange={(e) => setAmountETH(e.target.value)}  />
+                        <Input placeholder="Amount of ETH to mint in WETH  -  20% are send to the SafetyModule" color="white" value={amountETH} onChange={(e) => setAmountETH(e.target.value)}  />
                         <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={MintWETH}>Mint WETH</Button>
                     </Flex>
                     <Flex mt='1rem'>
