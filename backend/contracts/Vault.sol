@@ -115,6 +115,7 @@ contract Vault is ERC4626Fees  {
 
     function lockTokens(uint256 _amount, uint256 _lockDuration, address _beneficiary) external {
         require(balanceOf(msg.sender) >= _amount, "Insufficient balance to lock");
+        require(_amount == 1 || _amount == 3 || _amount == 6 || _amount == 9, "Duration must be 1, 3, 6 or 9 years");
         Lock memory newLock = Lock(_amount, block.timestamp, _lockDuration, _beneficiary, false);
         LockBeneficiary memory newLockBenef = LockBeneficiary(_amount, block.timestamp, _lockDuration, msg.sender, false);        
         uint lockId = lockCount[msg.sender]++;

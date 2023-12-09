@@ -129,6 +129,7 @@ const UsersBalances = ({ numberChanged } ) => {
                     <Text mt='1rem' color="white">{balanceWETH} WETH</Text>
                     <Text mt='1rem' color="white">{allowanceVault} Currently allowed to Vault contract</Text>
                     <Text mt='1rem' color="white">{balancevlegETH} vlegETH</Text>
+                    <Text mt='1rem' color="white">{balancevlegETH} available ETH to lock</Text>
                     <Text mt='1rem' color="white">{balanceLockedETH} locked ETH</Text>
                     <Text mt='1rem' color="white">{balanceLEG} LEG</Text>
 

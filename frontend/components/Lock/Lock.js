@@ -1,7 +1,7 @@
 'use client'
 
 // ChakraUI
-import { Flex, Alert, AlertIcon, Heading, Input, Button, Text, useToast, Spinner } from '@chakra-ui/react';
+import { Flex, Alert, AlertIcon, Heading, Input, Button, Box, useToast, Spinner } from '@chakra-ui/react';
 
 // Wagmi
 import { prepareWriteContract, writeContract, waitForTransaction, getWalletClient } from '@wagmi/core';
@@ -26,7 +26,10 @@ const Lock = ({ setNumberChanged }) => {
     const [amountETH, setAmountETH] = useState([]);
     const [approveWETH, setApproveWETH] = useState([]);
     const [amountvlegETH, setAmountVlegETH] = useState([]);
-    const [approveInvestor, setApproveInvestor] = useState([]);
+    const [amountToLock, setAmountToLock] = useState([]);
+    const [lockDuration, setlockDuration] = useState([]);
+    const [beneficiary, setbeneficiary] = useState([]);
+
 
     // State registering if the component is loading (a spinner will be displayed if it is)
     const [isLoading, setIsLoading] = useState(false);
@@ -38,88 +41,15 @@ const Lock = ({ setNumberChanged }) => {
     const { address, isConnected } = useAccount();
 
     // Function to deposit ETH in different contracts of Protocole
-    const MintWETH = async() => {
+
+    const LockWETH = async() => {
         try {
-            const _amountETH = BigInt(parseEther(amountETH)); 
-            const { request } = await prepareWriteContract({
-                address: contractWETHAddress,
-                abi: abiWETH,
-                functionName: 'deposit',
-                value: _amountETH,
-                account: address,             
-            });
-            const { hash } = await writeContract(request);
-            const data = await waitForTransaction({
-                hash: hash
-            });
-            setIsLoading(false);
-            toast({
-                title: 'Congratulations',
-                description: "You have made mint your WETH.",
-                status: 'success',
-                duration: 4000,
-                isClosable: true,
-            })
-        setNumberChanged(i => i+1)
-   
-        }
-        catch(err) {
-            console.log(err.message)
-            setIsLoading(false)
-            toast({
-                title: 'Error',
-                description: "An error occured.",
-                status: 'error',
-                duration: 4000,
-                isClosable: true,
-            })
-        }  
-    }; 
-    
-    const ApproveVault = async() => {
-        try {
-            const _approveWETH = BigInt(parseEther(approveWETH)); 
-            const { request } = await prepareWriteContract({
-                address: contractWETHAddress,
-                abi: abiWETH,
-                functionName: 'approve', 
-                args: [contractVaultAddress, _approveWETH],
-            });
-                       
-            const { hash } = await writeContract(request);
-            const data = await waitForTransaction({
-                hash: hash
-            });
-            setIsLoading(false);
-            toast({
-                title: 'Congratulations',
-                description: "You have made your approval.",
-                status: 'success',
-                duration: 4000,
-                isClosable: true,
-            })
-        }
-        catch(err) {
-            console.log(err.message)
-            setIsLoading(false)
-            toast({
-                title: 'Error',
-                description: "An error occured.",
-                status: 'error',
-                duration: 4000,
-                isClosable: true,
-            })
-        }  
-    };
-   
-    const MintvlegWETH = async() => {
-        try {
-            const _amountvlegETH = BigInt(parseEther(amountvlegETH)); 
+            const _amountToLock = BigInt(parseEther(amountToLock)); 
             const { request } = await prepareWriteContract({
                 address: contractVaultAddress,
                 abi: abiVault,
-                functionName: 'deposit',
-                args : [_amountvlegETH, address],            
+                functionName: 'lockTokens',
+                args : [_amountToLock, lockDuration, beneficiary],            
             });
             const { hash } = await writeContract(request);
             const data = await waitForTransaction({
@@ -128,7 +58,7 @@ const Lock = ({ setNumberChanged }) => {
             setIsLoading(false);
             toast({
                 title: 'Congratulations',
-                description: "You have made mint your vlegETH.",
+                description: "You have locked ETH in the Protocol.",
                 status: 'success',
                 duration: 4000,
                 isClosable: true,
@@ -156,21 +86,24 @@ const Lock = ({ setNumberChanged }) => {
                 <Flex direction="column" width='100%'>
                     
                     <Heading as='h2' size='xl' color="white">
-                        Lock ETH for Legacy and get LEG tokens
+                        Lock WETH for Legacy and get LEG tokens
+                    </Heading>
+                    <Heading as='h1' size='l' color="white">
+                        Specify the amount, the duration of lock : 1, 3, 6 or 9 years and the beneficiary
                     </Heading>
                     
                     <Flex mt='1rem'>
-                        <Input placeholder="Amount of WETH to mint in ETH" color="white" value={amountETH} onChange={(e) => setAmountETH(e.target.value)}  />
-                        <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={MintWETH}>Mint WETH</Button>
+                        <Input placeholder="Amount of you want to lock" color="white" value={amountToLock} onChange={(e) => setAmountToLock(e.target.value)}  />
                     </Flex>
                     <Flex mt='1rem'>
-                        <Input placeholder="Amount of WETH to approve to Vault" color="white" value={approveWETH} onChange={(e) => setApproveWETH(e.target.value)}  />
-                        <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={ApproveVault}>Allow Invest</Button>
+                        <Input placeholder="Duration of lock : 1, 3, 6 or 9 years" color="white" value={lockDuration} onChange={(e) => setlockDuration(e.target.value)}  />
                     </Flex>                    
                     <Flex mt='1rem'>
-                        <Input placeholder="Amount of vlegETH to mint in WETH" color="white" value={amountvlegETH} onChange={(e) => setAmountVlegETH(e.target.value)}  />
-                        <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={MintvlegWETH}>Mint vlegETH</Button>
-                    </Flex>                    
+                        <Input placeholder="Address of yout beneficiary" color="white" value={beneficiary} onChange={(e) => setbeneficiary(e.target.value)}  />
+                    </Flex>
+                    <Box display="flex" justifyContent="flex-end">
+                        <Button mt='1rem' borderColor="black" borderWidth="1px" color="black" bg="red" onClick={LockWETH}>Lock</Button>
+                    </Box>                    
                 </Flex>
             ) : (
                 <Alert status='warning'>
