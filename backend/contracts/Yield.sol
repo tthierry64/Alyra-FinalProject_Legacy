@@ -19,17 +19,16 @@ contract Yield {
 
     ///@dev This contract is a simulator of an invest that provides 10% interest of the original balance
 
-
-    function getBalanceWETH() public returns(uint) {
-        balance = weth.balanceOf(address(this));
-        return balance;
+    function getBalanceWETH() public view returns(uint) {
+        return weth.balanceOf(address(this));
     }
 
     ///@dev Mint 10% new WETH  
-    function addInterests() external {
-       newBalance = ((balance * 110) / 100);
-       weth.mint(address(this), (newBalance - balance));
-   }
+    function addInterest() external {
+        balance = weth.balanceOf(address(this));
+        newBalance = ((balance * 101) / 100);
+        weth.mint(address(this), (newBalance - balance));
+    }
 
     ///@dev send back all WETH to Investor contract
     function transferFundsToInvestor() external {

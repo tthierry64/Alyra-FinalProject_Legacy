@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react'
 import { formatEther, parseEther, createPublicClient, http, parseAbiItem } from 'viem'
 import { hardhat } from 'viem/chains'
 
-const UsersBalances = () => {
+const UsersBalances = ({ numberChanged } ) => {
 
     // Client Viem
     const client = usePublicClient();
@@ -32,8 +32,8 @@ const UsersBalances = () => {
     // IsLoading 
     const [isLoading, setIsLoading] = useState(false);
 
-    // Toast
-    const toast = useToast();
+    // // Toast
+    // const toast = useToast();
 
     // Account's informations
     const { address, isConnected } = useAccount();
@@ -86,23 +86,22 @@ const UsersBalances = () => {
         }
     };
 
-    const getAllowanceInvestor = async() => {
+    const getBalanceOfUserLock = async() => {
         try {
             const data = await readContract({
-                address: contractWETHAddress,
-                abi: abiWETH,
-                functionName: 'allowance',
-                args: [address, contractInvestorAddress],
+                address: contractVaultAddress,
+                abi: abiVault,
+                functionName: 'totalLocked',
+                args: [address],
             })
             return formatEther(data);
-
+            // return formatEther(data);
         }   
         catch(err) {
             console.log(err.message)
         }
-    };    
-
-    
+    };
+ 
     useEffect(() => {
         const getBalances = async() => {
             if(!isConnected) return
@@ -112,11 +111,11 @@ const UsersBalances = () => {
             setAllowanceVault((allowanceVault))            
             const balancevlegETH = await getBalanceOfUservlegETH()
             setBalancevlegETH((balancevlegETH))
-            const allowanceInvestor = await getAllowanceInvestor()
-            setAllowanceInvestor((allowanceInvestor))            
+            const balanceLockedETH = await getBalanceOfUserLock()
+            setBalanceLockedETH((balanceLockedETH))            
         }
         getBalances()
-    }, [address]);
+    }, [address, numberChanged]);
     
     return (
         <Flex p='2rem'>
@@ -130,9 +129,8 @@ const UsersBalances = () => {
                     <Text mt='1rem' color="white">{balanceWETH} WETH</Text>
                     <Text mt='1rem' color="white">{allowanceVault} Currently allowed to Vault contract</Text>
                     <Text mt='1rem' color="white">{balancevlegETH} vlegETH</Text>
-                    <Text mt='1rem' color="white">{allowanceInvestor} Currently allowed to Investor contract</Text>
-                    {/* <Text mt='1rem' color="white">{balanceLockedETH} locked ETH</Text>
-                    <Text mt='1rem' color="white">{balanceLEG} LEG</Text> */}
+                    <Text mt='1rem' color="white">{balanceLockedETH} locked ETH</Text>
+                    <Text mt='1rem' color="white">{balanceLEG} LEG</Text>
 
                 </Flex>
             ) : (
