@@ -9,6 +9,7 @@ import Lock from "@/components/Lock/Lock"
 import DepositYield from "@/components/Deposit/DepositYield"
 import UsersBalances from "@/components/Balances/UsersBalances"
 import ProtocolBalances from "@/components/Balances/ProtocolBalances"
+import LocksTable from "@/components/Lock/LocksTable"
 import Footer from "@/components/Footer/Footer"
 import { Box } from "@chakra-ui/react"
 
@@ -25,6 +26,7 @@ export default function Home() {
       <UsersBalances numberChanged={numberChanged}/>
       <Deposit setNumberChanged={setNumberChanged}/>
       <Lock setNumberChanged={setNumberChanged}/>
+      <LocksTable numberChanged={numberChanged}/>
       <DepositYield setNumberChanged={setNumberChanged}/>
       <Footer />
     </Box>

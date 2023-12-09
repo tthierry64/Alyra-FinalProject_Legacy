@@ -354,6 +354,11 @@ export const abiWETH = [
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "value",
         "type": "uint256"
@@ -3060,73 +3065,73 @@ export const contractDAOAddress = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
 
 export const abiYield = [
   {
-      "inputs": [
-          {
-              "internalType": "address",
-              "name": "_weth",
-              "type": "address"
-          },
-          {
-              "internalType": "address",
-              "name": "_investor",
-              "type": "address"
-          }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_weth",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_investor",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
   },
   {
-      "inputs": [],
-      "name": "addInterest",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    "inputs": [],
+    "name": "addInterests",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-      "inputs": [],
-      "name": "getBalanceWETH",
-      "outputs": [
-          {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-          }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+    "inputs": [],
+    "name": "getBalanceWETH",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-      "inputs": [],
-      "name": "investor",
-      "outputs": [
-          {
-              "internalType": "contract Investor",
-              "name": "",
-              "type": "address"
-          }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+    "inputs": [],
+    "name": "investor",
+    "outputs": [
+      {
+        "internalType": "contract Investor",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-      "inputs": [],
-      "name": "transferFundsToInvestor",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+    "inputs": [],
+    "name": "transferFundsToInvestor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-      "inputs": [],
-      "name": "weth",
-      "outputs": [
-          {
-              "internalType": "contract WETH",
-              "name": "",
-              "type": "address"
-          }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+    "inputs": [],
+    "name": "weth",
+    "outputs": [
+      {
+        "internalType": "contract WETH",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   }
 ]
 export const contractYieldAddress = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"

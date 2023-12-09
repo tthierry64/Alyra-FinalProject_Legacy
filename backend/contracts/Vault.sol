@@ -36,6 +36,7 @@ contract Vault is ERC4626Fees  {
 
     mapping(address => User) public user;    
     mapping(address => uint) public totalLocked;
+    mapping(address => uint) public numberOfLocks;
     mapping(address => uint) public maxLocked;
     mapping(address => uint) public maxDuration;
     mapping(address => bool) public hasFuturLegacy;
@@ -115,7 +116,7 @@ contract Vault is ERC4626Fees  {
 
     function lockTokens(uint256 _amount, uint256 _lockDuration, address _beneficiary) external {
         require(balanceOf(msg.sender) >= _amount, "Insufficient balance to lock");
-        require(_amount == 1 || _amount == 3 || _amount == 6 || _amount == 9, "Duration must be 1, 3, 6 or 9 years");
+        require(_lockDuration == 1 || _lockDuration == 3 || _lockDuration == 6 || _lockDuration == 9, "Duration must be 1, 3, 6 or 9 years");
         Lock memory newLock = Lock(_amount, block.timestamp, _lockDuration, _beneficiary, false);
         LockBeneficiary memory newLockBenef = LockBeneficiary(_amount, block.timestamp, _lockDuration, msg.sender, false);        
         uint lockId = lockCount[msg.sender]++;
@@ -134,6 +135,7 @@ contract Vault is ERC4626Fees  {
         totalLocked[msg.sender] += _amount;
         hasFuturLegacy[_beneficiary] = true;
         user[msg.sender].legToMint += _amount;
+        numberOfLocks[msg.sender] ++;
     }
 
     function claimUnlockTokensBenef(uint lockId2) external {
@@ -154,6 +156,7 @@ contract Vault is ERC4626Fees  {
         require((block.timestamp - userLock.startTime) > userLock.lockDuration, "Lock duration not passed");
         transferFrom(address(this), msg.sender, userLock.amount);
         userLock.unlocked = true;
+        numberOfLocks[msg.sender] --;
     }
 
     function _withdraw(
