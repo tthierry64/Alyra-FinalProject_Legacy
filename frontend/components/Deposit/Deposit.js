@@ -111,74 +111,7 @@ const Deposit = () => {
             })
         }  
     };
-    const ApproveInvestor = async() => {
-        try {
-            const _approveWETH = BigInt(parseEther(approveWETH)); 
-            const { request } = await prepareWriteContract({
-                address: contractWETHAddress,
-                abi: abiWETH,
-                functionName: 'approve', 
-                args: [contractInvestorAddress, _approveWETH],
-            });                        
-            const { hash } = await writeContract(request);
-            const data = await waitForTransaction({
-                hash: hash
-            });
-            setIsLoading(false);
-            toast({
-                title: 'Congratulations',
-                description: "You have made your approval.",
-                status: 'success',
-                duration: 4000,
-                isClosable: true,
-            })
-        }
-        catch(err) {
-            console.log(err.message)
-            setIsLoading(false)
-            toast({
-                title: 'Error',
-                description: "An error occured.",
-                status: 'error',
-                duration: 4000,
-                isClosable: true,
-            })
-        }  
-    };    
-    const ApproveOwner = async() => {
-        try {
-            const _approveWETH = BigInt(parseEther(approveWETH)); 
-            const { request } = await prepareWriteContract({
-                address: contractWETHAddress,
-                abi: abiWETH,
-                functionName: 'approve', 
-                args: [ownerAddress, _approveWETH],
-            });                        
-            const { hash } = await writeContract(request);
-            const data = await waitForTransaction({
-                hash: hash
-            });
-            setIsLoading(false);
-            toast({
-                title: 'Congratulations',
-                description: "You have made your approval.",
-                status: 'success',
-                duration: 4000,
-                isClosable: true,
-            })
-        }
-        catch(err) {
-            console.log(err.message)
-            setIsLoading(false)
-            toast({
-                title: 'Error',
-                description: "An error occured.",
-                status: 'error',
-                duration: 4000,
-                isClosable: true,
-            })
-        }  
-    };     
+   
     const MintvlegWETH = async() => {
         try {
             const _amountvlegETH = BigInt(parseEther(amountvlegETH)); 
@@ -214,11 +147,7 @@ const Deposit = () => {
         }  
     };
 
-    const handlClick = async() => {  
-        ApproveVault();
-        ApproveInvestor();
-        ApproveOwner(); 
-    };
+
     
     const ApproveInvestor2 = async() => {
         try {
@@ -270,12 +199,8 @@ const Deposit = () => {
                         <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={MintWETH}>Mint WETH</Button>
                     </Flex>
                     <Flex mt='1rem'>
-                        <Input placeholder="Amount of WETH to approve" color="white" value={approveWETH} onChange={(e) => setApproveWETH(e.target.value)}  />
-                        <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={handlClick}>Allow Invest</Button>
-                    </Flex>
-                    <Flex mt='1rem'>
                         <Input placeholder="Amount of WETH to approve to Investor" color="white" value={approveWETH} onChange={(e) => setApproveWETH(e.target.value)}  />
-                        <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={ApproveInvestor2}>Allow Invest</Button>
+                        <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={ApproveVault}>Allow Invest</Button>
                     </Flex>                    
                     <Flex mt='1rem'>
                         <Input placeholder="Amount of vlegETH to mint in WETH" color="white" value={amountvlegETH} onChange={(e) => setAmountVlegETH(e.target.value)}  />

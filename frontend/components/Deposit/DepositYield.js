@@ -24,6 +24,7 @@ const DepositYield = () => {
 
     // Input States
     const [amountWETH, setAmountWETH] = useState([]);
+    const [approveWETH, setApproveWETH] = useState([]);
 
     // State that registers if the current address is the owner
     const [isOwner, setIsOwner] = useState(false);
@@ -38,14 +39,49 @@ const DepositYield = () => {
     const { address, isConnected } = useAccount();
 
     // Function to Deposit ETH in Yield for investment
+    const ApproveInvestor = async() => {
+        try {
+            const _amountWETH = BigInt(parseEther(approveWETH)); 
+            const { request } = await prepareWriteContract({
+                address: contractWETHAddress,
+                abi: abiWETH,
+                functionName: 'approved', 
+                args: [contractVaultAddress, _amountWETH],
+            });
+            const { hash } = await writeContract(request);
+            const data = await waitForTransaction({
+                hash: hash
+            });
+            setIsLoading(false);
+            toast({
+                title: 'Congratulations',
+                description: "You have made your approval.",
+                status: 'success',
+                duration: 4000,
+                isClosable: true,
+            })
+        }
+        catch(err) {
+            console.log(err.message)
+            setIsLoading(false)
+            toast({
+                title: 'Error',
+                description: "An error occured.",
+                status: 'error',
+                duration: 4000,
+                isClosable: true,
+            })
+        }  
+    };    
+
     const DepositInvestor = async() => {
         try {
             const _amountWETH = BigInt(parseEther(amountWETH)); 
             const { request } = await prepareWriteContract({
-                address: contractInvestorAddress,
-                abi: abiInvestor,
-                functionName: 'getFromVault', 
-                args: [_amountWETH],
+                address: contractWETHAddress,
+                abi: abiWETH,
+                functionName: 'transferFrom', 
+                args: [contractVaultAddress, contractInvestorAddress, _amountWETH],
             });
             const { hash } = await writeContract(request);
             const data = await waitForTransaction({
@@ -113,7 +149,10 @@ const DepositYield = () => {
                     <Heading as='h2' size='xl' color="white">
                         Deposit WETH in the Investor Contract
                     </Heading>
-                    
+                    <Flex mt='1rem'>
+                        <Input placeholder="Amount of WETH to approve to Investor" color="white" value={approveWETH} onChange={(e) => setApproveWETH(e.target.value)}  />
+                        <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={ApproveInvestor}>Allow Invest</Button>
+                    </Flex>                    
                     <Flex mt='1rem'>
                         <Input placeholder="Amount in WETH" color="white" value={amountWETH} onChange={(e) => setAmountWETH(e.target.value)}  />
                         <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={DepositInvestor}>Deposit</Button>

