@@ -2,6 +2,22 @@ LEGACY PROTOCOL
 
 Video of presentation of the dapp  : https://www.loom.com/share/a0dff8979d574c0cacef97ebc55b5a42?t=595&sid=8b8c531a-163d-41ab-ab05-7d7bf1b84611
 
+website on vercel : https://alyra-final-project-legacy.vercel.app/
+
+contracts on sepolia :
+
+SafetyModule Contract deployed to 0xc7d16819e2120a3a08527d25Ca6639dc9C2096cE
+WETH Contract deployed to 0x4eCDbAF85086404557Bcc9B0C1fA3753B72f6e00
+LEG Contract deployed to 0x2B68cb38eCaf2156c0058117F63af450Fe0EDc5a
+DAOTreasory Contract deployed to 0x4b895804479d9d268f55EDFB30fd5C428B73F6AF
+Vault Contract deployed to 0x205E73dcF63b78C4ba4b19B8F0A26401E88056C7
+DAO Contract deployed to 0x7436202E0971a64961039f3bFfc9315bbb3Ac8e9
+Investor Contract deployed to 0x563F8C8E32686123327fdcF65a7747458aFbe290
+Yield Contract deployed to 0x28CF3D0274C7d7b511bF815d069806bb15748F70
+
+
+
+
 A learning project
 
 Project Description
