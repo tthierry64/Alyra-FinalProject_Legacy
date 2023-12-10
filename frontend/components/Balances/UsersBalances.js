@@ -7,7 +7,7 @@ import { prepareWriteContract, writeContract, readContract } from '@wagmi/core'
 import { useAccount, usePublicClient } from 'wagmi'
 
 // Contracts informations
-import { abiSafetyModule, abiVault, abiWETH, contractSafetyModuleAddress, contractVaultAddress, contractWETHAddress } from '@/constants';;
+import { abiSafetyModule, abiVault, abiWETH, abiLEG, contractLEGAddress, contractSafetyModuleAddress, contractVaultAddress, contractWETHAddress } from '@/constants';;
 
 // ReactJS
 import { useState, useEffect } from 'react'
@@ -117,6 +117,22 @@ const UsersBalances = ({ numberChanged } ) => {
         }
     };
 
+    const getBalanceOfLEG = async() => {
+        try {
+            const data = await readContract({
+                address: contractLEGAddress,
+                abi: abiLEG,
+                functionName: 'totalLocked',
+                args: [address],
+            })
+            return formatEther(data);
+            // return formatEther(data);
+        }   
+        catch(err) {
+            console.log(err.message)
+        }
+    };    
+
     useEffect(() => {
         const getBalances = async() => {
             if(!isConnected) return
@@ -129,7 +145,9 @@ const UsersBalances = ({ numberChanged } ) => {
             const balancevlegETH = await getBalanceOfUservlegETH()
             setBalancevlegETH((balancevlegETH))
             const balanceLockedETH = await getBalanceOfUserLock()
-            setBalanceLockedETH((balanceLockedETH))        
+            setBalanceLockedETH((balanceLockedETH))
+            const balanceLEG = await getBalanceOfUserLock()
+            setBalanceLEG((balanceLEG))        
         }
         getBalances()
     }, [address, numberChanged]);

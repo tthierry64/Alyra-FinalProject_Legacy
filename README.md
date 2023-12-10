@@ -1,5 +1,7 @@
 LEGACY PROTOCOL
 
+Video of presentation of the dapp  : https://www.loom.com/share/a0dff8979d574c0cacef97ebc55b5a42?t=595&sid=8b8c531a-163d-41ab-ab05-7d7bf1b84611
+
 A learning project
 
 Project Description

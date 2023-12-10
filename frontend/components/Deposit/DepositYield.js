@@ -162,7 +162,7 @@ const DepositYield = ({ setNumberChanged }) => {
             setIsLoading(false);
             toast({
                 title: 'Congratulations',
-                description: "You have transfered WETH from Vault.",
+                description: "You have transfered WETH from Investor to Yield.",
                 status: 'success',
                 duration: 4000,
                 isClosable: true,
