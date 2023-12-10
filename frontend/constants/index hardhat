@@ -107,7 +107,8 @@ export const abiSafetyModule = [
     "type": "receive"
   }
 ]
-export const contractSafetyModuleAddress = "0xc7d16819e2120a3a08527d25Ca6639dc9C2096cE"
+export const contractSafetyModuleAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+
 
 export const abiWETH = [
   {
@@ -597,7 +598,7 @@ export const abiWETH = [
     "type": "function"
   }
 ]
-export const contractWETHAddress = "0x4eCDbAF85086404557Bcc9B0C1fA3753B72f6e00"
+export const contractWETHAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
 
 export const abiLEG = [
   {
@@ -940,7 +941,7 @@ export const abiLEG = [
     "type": "function"
   }
 ]
-export const contractLEGAddress = "0x2B68cb38eCaf2156c0058117F63af450Fe0EDc5a"
+export const contractLEGAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
 
 export const abiDAOTreasory = [
   {
@@ -1004,7 +1005,7 @@ export const abiDAOTreasory = [
     "type": "receive"
   }
 ]
-export const contractDAOTreasoryddress = "0x4b895804479d9d268f55EDFB30fd5C428B73F6AF"
+export const contractDAOTreasoryddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
 
 export const abiVault = [
   {
@@ -2435,7 +2436,7 @@ export const abiVault = [
     "type": "function"
   }
 ]
-export const contractVaultAddress = "0x205E73dcF63b78C4ba4b19B8F0A26401E88056C7"
+export const contractVaultAddress = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
 
 export const abiInvestor = [
   {
@@ -2653,7 +2654,7 @@ export const abiInvestor = [
     "type": "function"
   }
 ]
-export const contractInvestorAddress = "0x563F8C8E32686123327fdcF65a7747458aFbe290"
+export const contractInvestorAddress = "0x0165878A594ca255338adfa4d48449f69242Eb8F"
 
 export const abiDAO = [
   {
@@ -3086,7 +3087,7 @@ export const abiDAO = [
     "type": "function"
   }
 ]
-export const contractDAOAddress = "0x7436202E0971a64961039f3bFfc9315bbb3Ac8e9"
+export const contractDAOAddress = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
 
 export const abiYield = [
   {
@@ -3159,6 +3160,6 @@ export const abiYield = [
     "type": "function"
   }
 ]
-export const contractYieldAddress = "0x28CF3D0274C7d7b511bF815d069806bb15748F70"
+export const contractYieldAddress = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
 
-export const ownerAddress ="0xE03E47f9c56652201Dc3C564c639C9eB3D1cC416"
+export const ownerAddress ="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
