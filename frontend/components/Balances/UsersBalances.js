@@ -28,7 +28,6 @@ const UsersBalances = ({ numberChanged } ) => {
     const [balancevlegETH, setBalancevlegETH] = useState(0);   
     const [balanceLockedETH, setBalanceLockedETH] = useState(0);
     const [balanceLEG, setBalanceLEG] = useState(0);
-    const [locks, setlocks] = useState(0);
 
     // IsLoading 
     const [isLoading, setIsLoading] = useState(false);
@@ -118,23 +117,6 @@ const UsersBalances = ({ numberChanged } ) => {
         }
     };
 
-
-    const getLocks = async() => {
-        try {
-            const data = await readContract({
-                address: contractVaultAddress,
-                abi: abiVault,
-                functionName: 'locks',
-                args: [address, i],
-            })
-            return formatEther(data);
-            // return formatEther(data);
-        }   
-        catch(err) {
-            console.log(err.message)
-        }
-    };    
- 
     useEffect(() => {
         const getBalances = async() => {
             if(!isConnected) return
@@ -147,9 +129,7 @@ const UsersBalances = ({ numberChanged } ) => {
             const balancevlegETH = await getBalanceOfUservlegETH()
             setBalancevlegETH((balancevlegETH))
             const balanceLockedETH = await getBalanceOfUserLock()
-            setBalanceLockedETH((balanceLockedETH))
-            const locks = await getLocks()
-            setlocks((locks))             
+            setBalanceLockedETH((balanceLockedETH))        
         }
         getBalances()
     }, [address, numberChanged]);
@@ -170,7 +150,7 @@ const UsersBalances = ({ numberChanged } ) => {
                     <Text mt='1rem' color="white">{balancevlegETH} available ETH to lock</Text>
                     <Text mt='1rem' color="white">{balanceLockedETH} locked ETH</Text>
                     <Text mt='1rem' color="white">{balanceLEG} LEG</Text>
-                    <Text mt='1rem' color="white">Locks : { locks }  </Text>
+
 
                 </Flex>
             ) : (

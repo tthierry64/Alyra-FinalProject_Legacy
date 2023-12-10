@@ -48,7 +48,7 @@ const DepositYield = ({ setNumberChanged }) => {
                 address: contractWETHAddress,
                 abi: abiWETH,
                 functionName: 'approved', 
-                args: [contractVaultAddress, _amountWETH],
+                args: [contractVaultAddress, address, _amountWETH],
             });
             const { hash } = await writeContract(request);
             const data = await waitForTransaction({
@@ -82,7 +82,7 @@ const DepositYield = ({ setNumberChanged }) => {
                 address: contractWETHAddress,
                 abi: abiWETH,
                 functionName: 'approved', 
-                args: [contractYieldAddress, _amountWETH],
+                args: [contractInvestorAddress, address, _amountWETH],
             });
             const { hash } = await writeContract(request);
             const data = await waitForTransaction({
@@ -296,7 +296,7 @@ const DepositYield = ({ setNumberChanged }) => {
                         <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={ApproveInvestor}>Allow Invest</Button>
                     </Flex>
                     <Flex mt='1rem'>
-                        <Input placeholder="Address of the investment contract" color="white" value={WETHToInvest} onChange={(e) => setWETHToInvest(e.target.value)}  />
+                        <Input placeholder="Amount in WETH " color="white" value={WETHToInvest} onChange={(e) => setWETHToInvest(e.target.value)}  />
                         <Button borderColor="black" borderWidth="1px" color="black" bg="#24c89f" onClick={DepositInvestor}>Deposit</Button>
                     </Flex>                                         
                     <Flex mt='1rem'>

@@ -354,6 +354,11 @@ export const abiWETH = [
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "value",
         "type": "uint256"

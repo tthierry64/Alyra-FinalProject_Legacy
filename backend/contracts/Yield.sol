@@ -32,7 +32,7 @@ contract Yield {
     /// @dev This function calculates the new balance by adding 10% to the current balance, and then mints new WETH to the contract.
     function addInterest() external {
         balance = weth.balanceOf(address(this));
-        newBalance = ((balance * 101) / 100);
+        newBalance = ((balance * 110) / 100);
         weth.mint(address(this), (newBalance - balance));
     }
 

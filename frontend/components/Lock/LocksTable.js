@@ -1,6 +1,6 @@
 'use client'
 
-import { Flex, Text, Table, Thead, Tbody, Tr, Th, Td, TableCaption, TableContainer,  Heading, useToast, Spinner } from '@chakra-ui/react'
+import { Flex, Heading, Alert, AlertIcon, Text, Table, Thead, Tbody, Tr, Th, Td, TableCaption, TableContainer,useToast, Spinner } from '@chakra-ui/react'
 
 // Wagmi
 import { prepareWriteContract, writeContract, readContract } from '@wagmi/core'
@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react'
 // Viem
 import { formatEther, parseEther, createPublicClient, http, parseAbiItem } from 'viem'
 import { hardhat } from 'viem/chains'
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 
 const LocksTable = ({ numberChanged }) => {
 
@@ -23,6 +24,9 @@ const LocksTable = ({ numberChanged }) => {
 
     // State that will register the number of locks
     const [numberLocks, setNumberLocks] = useState(0);
+
+     // State that will register the number of locks
+     const [buffer, setBuffer] = useState(0);   
 
     // Array that will contain all the locks
     const [locksArray, setLocksArray] = useState([]);
@@ -61,49 +65,22 @@ const LocksTable = ({ numberChanged }) => {
     
     const pushLock = async (i) => {
         try {
-            if (!isLoading) {
-                setLocksArray([])
-            }
-            setIsLoading(true)
             const data = await readContract({
                 address: contractVaultAddress,
                 abi: abiVault,
                 functionName: 'locks',
                 args: [address, i],
             })
-            setLocksArray((prevLock) => [...prevLock, data]);
-            if (i === numberLocks) {
-                setIsLoading(false)
-            }
+            setLocksArray(array => [...array, data]
+            )
+            if(i == numberLocks.toString() -1 ) {
+                setBuffer(j => j+1);
+            }    
         }
         catch(err) {
             console.log(err.message)
         }
     }
-
-    // Get all the locks when the number of lock changes
-    useEffect(() => {
-
-        for(let i = 1; i <= numberLocks; i++) {
-            pushLock(i);
-        }
-    }, [numberLocks])
-
-    // // Display all the locks on the table
-    useEffect(() => {
-        console.log(locksArray)
-        if (!isLoading) {
-            setLocksComponents([])
-            for(let i = 0; i < numberLocks; i++) {   
-                setLocksComponents((prevComponents) => [...prevComponents, (
-                    <Tr key={i + 1}>
-                        <Td>{i + 1}</Td>
-                        <Td>{locksArray[i].description}</Td>
-                    </Tr>
-                )])
-            }
-        }
-    }, [isLoading, numberChanged])
 
     // Getting number of locks
     useEffect(() => {
@@ -115,28 +92,61 @@ const LocksTable = ({ numberChanged }) => {
         getLocks()
     }, [address, numberChanged]);
 
+    // Get all the locks when the number of lock changes
+    useEffect(() => {
+        for(let i = 0; i <= numberLocks.toString() - 1; i++) {
+            pushLock(i);
+        }
+    }, [numberLocks, buffer])
+
+    // // Display all the locks on the table
+    useEffect(() => {
+        if (locksArray.length !=0) {
+            setLocksComponents([])
+            for(let i = 0; i < numberLocks.toString() ; i++)  {
+                setLocksComponents((prevComponents) => [...prevComponents, (
+                    <Tr key={i + 1}>
+                        <Td>{locksArray[i][0].toString()}</Td>
+                        <Td>{locksArray[i][1].toString()}</Td>
+                        <Td>{locksArray[i][2].toString()}</Td>
+                        <Td>{locksArray[i][3].toString()}</Td>
+                        <Td>{locksArray[i][4].toString()}</Td>
+                    </Tr>
+                )])
+            }
+        }
+    }, [isLoading, buffer])
+
     return(
         <>
-            <Flex direction="column" width='100%'>
-                <Text mt='1rem' color="white">Locks : { numberLocks }  </Text>
-            </Flex>
-            <TableContainer color="white">
-                <Table variant='simple' border="2px solid white" color="white">
-                    <TableCaption color="white">Locks</TableCaption>
-                    <Thead>
-                        <Tr>
-                            <Th color="white">Amount</Th>
-                            <Th color="white">StartTime</Th>
-                            <Th color="white">LockDuration</Th>
-                            <Th color="white">Beneficiary</Th>
-                            <Th color="white">Lock Status</Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {locksComponents}
-                    </Tbody>
-                </Table>
-            </TableContainer>
+            {(numberLocks != 0) ?
+            <> 
+                <Flex direction="column" width='100%'>
+                    <Text mt='1rem' color="white">Number of locks : { numberLocks.toString() }</Text>
+                </Flex>
+                <Flex direction="column" width='100%'>
+                    <Text mt='1rem' color="white"> </Text>
+                </Flex>            
+                <TableContainer color="white">
+                    <Table variant='simple' border="2px solid white" color="white">
+                        <TableCaption color="white">Table of Locks</TableCaption>
+                        <Thead>
+                            <Tr>
+                                <Th color="white">Amount in wei</Th>
+                                <Th color="white">StartTime</Th>
+                                <Th color="white">LockDuration</Th>
+                                <Th color="white">Beneficiary</Th>
+                                <Th color="white">Unlocked Status</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {locksComponents}
+                        </Tbody>
+                    </Table>
+                </TableContainer>
+            </>
+            : <></>
+            }   
         </>
     )
 }
