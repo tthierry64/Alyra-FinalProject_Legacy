@@ -8,6 +8,9 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
 
+/// @title ERC4626Fees Contract
+/// @author Thomas THIERRY from an idea o openzeppelin team
+/// @notice This contract manages the treasury of the DAO and handles the withdrawal of ETH.
 /// @dev ERC4626 vault with entry/exit fees expressed in https://en.wikipedia.org/wiki/Basis_point[basis point (bp)].
 abstract contract ERC4626Fees is ERC4626 {
     

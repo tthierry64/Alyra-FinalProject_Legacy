@@ -5,6 +5,9 @@ pragma solidity ^0.8.20;
 import "./ERC4626Fees.sol";
 import "./DAO.sol";
 
+/// @title Vault Contract
+/// @author Your Name
+/// @notice This contract manages the locking of funds for users in exchange for vlegETH, maintaining proportionality in the vault. It also handles the locking of funds from users (technically in vlegETH).
 contract Vault is ERC4626Fees  {
     address payable public DAOTreasory;
     uint8 internal maxLockDuration;
@@ -49,16 +52,25 @@ contract Vault is ERC4626Fees  {
     mapping(address => uint) public lockCountStartBenef; ///@dev used for front
     mapping(address => uint) public lockCountEndBenef; ///@dev used for front      
 
+    /// @notice The constructor for the Vault contract.
+    /// @dev The constructor sets the DAOTreasory address and calls the ERC4626 and ERC20 constructors.
+    /// @param _asset The address of the asset contract.
+    /// @param _DAOTreasory The address of the DAOTreasory contract.
     constructor (IERC20 _asset, address payable _DAOTreasory) ERC4626(_asset) ERC20("Vault Legacy Token", "vlegETH") {
         DAOTreasory = _DAOTreasory;      
     }    
 
+    /// @notice Sets the maximum duration for locks.
+    /// @dev This function updates the maximum duration for locks if the new duration is greater than the current maximum duration.
+    /// @param _duration The new maximum duration for locks.
     function setMAxDuration(uint _duration) external {
         if(_duration > maxDuration[msg.sender]) {
             maxDuration[msg.sender] = _duration;
         }
     }
-
+    /// @notice Sets the fee for exiting the vault.
+    /// @dev This function calculates and returns the exit fee in basis points based on the maximum duration of locks.
+     /// @return The exit fee in basis points.
     function setFee() public returns (uint256) {
         uint bps = 400;
         if(maxDuration[msg.sender] == 1) {
@@ -96,7 +108,7 @@ contract Vault is ERC4626Fees  {
     } 
  
 
-    ///@dev Proof of life
+    ///@dev Proof of life due to inactivity and no connexion to the dapp
     function checkAlive(address _addressUser) external {
         require(!user[_addressUser].alive, "User is not alive.");
         if (block.timestamp - user[_addressUser].lastConnection > 6 * 30 days) {
@@ -114,6 +126,11 @@ contract Vault is ERC4626Fees  {
         return user[_addrUser].legToMint;
     }                  
 
+    /// @notice Locks tokens for a certain duration.
+    /// @dev This function locks the specified amount of tokens for the specified duration, and associates them with a beneficiary. It also updates the user's legToMint value.
+    /// @param _amount The amount of tokens to lock.
+    /// @param _lockDuration The duration for which to lock the tokens.
+    /// @param _beneficiary The address of the beneficiary to whom the tokens are associated.
     function lockTokens(uint256 _amount, uint256 _lockDuration, address _beneficiary) external {
         require(balanceOf(msg.sender) >= _amount, "Insufficient balance to lock");
         require(_lockDuration == 1 || _lockDuration == 3 || _lockDuration == 6 || _lockDuration == 9, "Duration must be 1, 3, 6 or 9 years");
@@ -138,6 +155,9 @@ contract Vault is ERC4626Fees  {
         numberOfLocks[msg.sender] ++;
     }
 
+    /// @notice Claims unlocked tokens for a beneficiary.
+    /// @dev This function allows a beneficiary to claim unlocked tokens. It requires that the beneficiary is not alive and that the lock duration has passed.
+    /// @param lockId2 The id of the lock from which to claim unlocked tokens.
     function claimUnlockTokensBenef(uint lockId2) external {
         require(lockCountBenef[msg.sender] > lockId2, "Invalid lock id");
         require(!user[(locksBenef[msg.sender][lockId2].legatee)].alive, "legatee still alive");
@@ -149,6 +169,9 @@ contract Vault is ERC4626Fees  {
         userLockBenef.unlocked = true;
     }            
 
+    /// @notice Claims unlocked tokens.
+    /// @dev This function allows a user to claim unlocked tokens. It requires that the tokens are not already unlocked and that the lock duration has passed.
+    /// @param lockId The id of the lock from which to claim unlocked tokens.
     function claimTokens(uint lockId) external {
         require(lockCount[msg.sender] > lockId, "Invalid lock id");
         Lock storage userLock = locks[msg.sender][lockId];
@@ -159,6 +182,13 @@ contract Vault is ERC4626Fees  {
         numberOfLocks[msg.sender] --;
     }
 
+    /// @notice Withdraws assets from the vault.
+    /// @dev This function calculates the unlockable shares, checks if the total locked assets of the owner are greater than 0, calculates the fee, determines the recipient of the fee, and then   calls the parent contract's `_withdraw` function. If a fee is due and the recipient is not the contract itself, it transfers the fee to the recipient.
+    /// @param caller The address of the caller.
+    /// @param receiver The address of the receiver.
+    /// @param owner The address of the owner.
+    /// @param assets (ERC20 : WETH) The amount of assets to withdraw.
+    /// @param shares (ERC4626 : vlegETH) The amount of shares to withdraw
     function _withdraw(
         address caller,
         address receiver,

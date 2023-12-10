@@ -1,27 +1,28 @@
 // SPDX-License-Identifier: MIT
 
-/// @notice My implementation of Wrapped Ether contract using 'ERC20 from OpenZeppelin'
-/// @author Thomas THIERRY
-
-pragma solidity ^0.8.20;
-
-
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./SafetyModule.sol";
 
+/// @title WETH Contract
+/// @author Thomas THIERRY
+/// @notice This contract manages the conversion of 80% of the ETH deposited into WETH (ERC20) and transfers the remaining 20% to the SafetyModule contract. It manages the WETH throughout the protocol's process.
+pragma solidity ^0.8.20;
 contract WETH is ERC20, Ownable {
 
     SafetyModule public safetymodule;
 
     mapping (address => uint) private balancesETHSafe;
 
-    ///@dev constructor 'asked' by the OpenZeppelin contract
+    /// @notice The constructor for the WETH contract.
+    /// @dev This function initializes the contract with the SafetyModule contract, 'asked' by the OpenZeppelin ERC20 contract
+    /// @param _safetymodule The address of the SafetyModule contract.
     constructor(address payable  _safetymodule) ERC20("Wrapped Ether", "WETH") Ownable(msg.sender) {
         safetymodule = SafetyModule(_safetymodule);
      }
 
-    /// @dev mint 1 WETH for each ETH sent by the sender. WETH are automatically associated to the sender. 20% of this are sent to SafetyModule contract
+    /// @notice Allows a user to deposit ETH into the contract. The contract mints 1 WETH for each ETH sent by the sender. WETH are automatically associated with the sender. 20% of this are sent to the SafetyModule contract.
+    /// @dev The function checks if the deposited amount is greater than or equal to 0.1 ETH. If it is, it sends 20% of the deposited amount to the SafetyModule contract, adds the remaining 80% to the sender's balance, and emits a `Transfer` event.
     function deposit() external payable {
         require(msg.value >= (1e17), "Insufficient deposit, minimum 0,1 ETH");
         uint _amount20 = (msg.value / 5) ;
@@ -31,7 +32,9 @@ contract WETH is ERC20, Ownable {
         _mint(msg.sender, msg.value - _amount20);
     }
 
-    /// @dev If the balance of WETH is sufficient, unwrap WETH to ETH and send ETH to the caller. WETH are burned. 
+    /// @notice Allows a user to withdraw WETH from the contract.
+    /// @dev The function checks if the user has enough balance to withdraw the requested amount. If the user has enough balance, it burns the requested amount of WETH, sends the requested     amount of ETH to the user, and emits a `Transfer` event.
+    /// @param _amount The amount of WETH the user wants to withdraw 
     function withdraw(uint _amount) external {
         require(balanceOf(msg.sender) >= _amount, "Insufficient balance");
         _burn(msg.sender, _amount);
